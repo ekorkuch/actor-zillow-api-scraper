@@ -97,7 +97,7 @@ const splitQueryState = queryState => {
 };
 
 // Make API query for all ZPIDs in map reqion
-const queryRegionHomes = async (queryState, type) => {
+const queryRegionHomes = async (queryState, type, doz) => {
     if(type === 'rent'){
         queryState.filterState = {"isForSaleByAgent":{"value":false},"isForSaleByOwner":{"value":false},"isNewConstruction":{"value":false},"isForSaleForeclosure":{"value":false},"isComingSoon":{"value":false},"isAuction":{"value":false},"isPreMarketForeclosure":{"value":false},"isPreMarketPreForeclosure":{"value":false},"isForRent":{"value":true}};
     }
@@ -107,8 +107,8 @@ const queryRegionHomes = async (queryState, type) => {
     else if(type === 'all'){
         queryState.filterState = {"isPreMarketForeclosure":{"value":true},"isForSaleForeclosure":{"value":true},"sortSelection":{"value":"globalrelevanceex"},"isAuction":{"value":true},"isNewConstruction":{"value":true},"isRecentlySold":{"value":true},"isForSaleByOwner":{"value":true},"isComingSoon":{"value":true},"isPreMarketPreForeclosure":{"value":true},"isForSaleByAgent":{"value":true}};
     }
-    if(input.daysOnZillow) {
-      queryState.filterState["doz"]={"value":parseInt(input.daysOnZillow)};
+    if(doz) {
+      queryState.filterState["doz"]={"value":parseInt(doz)};
     }
     const qsParam = encodeURIComponent(JSON.stringify(queryState));
     const resp = await fetch('https://www.zillow.com/search/GetSearchPageState.htm?searchQueryState=' + qsParam);
@@ -253,7 +253,7 @@ Apify.main(async () => {
             let qs = request.userData.queryState, searchState;
             try{
                 if(!qs){qs = await page.evaluate(getInitialQueryState);}
-                searchState = await page.evaluate(queryRegionHomes, qs, input.type);
+                searchState = await page.evaluate(queryRegionHomes, qs, input.type, input.daysOnZillow);
             }
             catch(e){
                 await puppeteerPool.retire(page.browser());
