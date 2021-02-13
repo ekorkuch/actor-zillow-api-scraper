@@ -99,7 +99,7 @@ const splitQueryState = queryState => {
 // Make API query for all ZPIDs in map reqion
 const queryRegionHomes = async (queryState, type) => {
     if(type === 'rent'){
-        queryState.filterState = {"isForSaleByAgent":{"value":false},"isForSaleByOwner":{"value":false},"isNewConstruction":{"value":false},"isForSaleForeclosure":{"value":false},"isComingSoon":{"value":false},"isAuction":{"value":false},"isPreMarketForeclosure":{"value":false},"isPreMarketPreForeclosure":{"value":false},"isForRent":{"value":true}};
+        queryState.filterState = {"isForSaleByAgent":{"value":false},"isForSaleByOwner":{"value":false},"isNewConstruction":{"value":false},"isForSaleForeclosure":{"value":false},"isComingSoon":{"value":false},"isAuction":{"value":false},"isPreMarketForeclosure":{"value":false},"isPreMarketPreForeclosure":{"value":false},"isForRent":{"value":true}, "doz":{"value":1}};
     }
     else if(type === 'fsbo'){
         queryState.filterState = {"isForSaleByAgent":{"value":false},"isForSaleByOwner":{"value":true},"isNewConstruction":{"value":false},"isForSaleForeclosure":{"value":false},"isComingSoon":{"value":false},"isAuction":{"value":false},"isPreMarketForeclosure":{"value":false},"isPreMarketPreForeclosure":{"value":false},"isForRent":{"value":false}};
@@ -115,7 +115,7 @@ const queryRegionHomes = async (queryState, type) => {
 // Make API query for home data by ZPID
 const queryZpid = async (zpid, queryId) => {
     const resp = await fetch(`https://www.zillow.com/graphql/?zpid=${zpid}&contactFormRenderParameter=&queryId=${queryId}&operationName=ForSaleDoubleScrollFullRenderQuery`, {
-        method: 'POST', 
+        method: 'POST',
         body: JSON.stringify({
             "operationName": "ForSaleDoubleScrollFullRenderQuery",
             "variables": {
@@ -128,7 +128,7 @@ const queryZpid = async (zpid, queryId) => {
             },
             //"clientVersion": "home-details/6.0.11.139.master.dbc9d82",
             "queryId": queryId
-        }), 
+        }),
         headers: {
             'accept': '*/*',
             'accept-encoding': 'gzip, deflate, br',
@@ -175,7 +175,7 @@ Apify.main(async () => {
     if(!(input.search && input.search.trim().length > 0) && !input.startUrls && !input.zpids){
         throw new Error('Either "search", "startUrls" or "zpids" attribute has to be set!');
     }
-    
+
     // Initialize minimum time
     const minTime = input.minDate ? (parseInt(input.minDate) || new Date(input.minDate).getTime()) : null;
 
@@ -256,7 +256,7 @@ Apify.main(async () => {
                 await puppeteerPool.retire(page.browser());
                 throw 'Unable to get searchState, retrying...';
             }
-            
+
             // Extract home data by ZPID
             const processZpid = async (zpid, index) => {
                 try{
@@ -284,7 +284,7 @@ Apify.main(async () => {
                     return;
                 }
             };
-            
+
             // Extract all homes by input ZPIDs
             if(input.zpids && input.zpids.length > 0){
                 const start = request.userData.start || 0;
@@ -295,7 +295,7 @@ Apify.main(async () => {
                 }
                 return process.exit(0);
             }
-            
+
             // Check mapResults
             const mapResults = searchState.searchResults.mapResults;
             console.log('Searching homes at ' + JSON.stringify(qs.mapBounds));
