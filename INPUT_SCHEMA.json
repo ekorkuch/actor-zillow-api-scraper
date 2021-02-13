@@ -60,6 +60,12 @@
             "editor": "textfield",
             "description": "Oldest date allowed in results"
         },
+        "daysOnZillow": {
+            "title": "Days on Zillow",
+            "type": "string",
+            "editor": "textfield",
+            "description": "Limit the number of days the property has been on Zillow (leave blank for all)"
+        },
         "simple": {
             "title": "Simple results",
             "type": "boolean",
